@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import (AbstractUser)
 from django.conf import settings
+from django.urls import reverse
 
 class User(AbstractUser):
     ''' Usuário comum que posso Personalizar '''
@@ -31,10 +32,18 @@ class Item(models.Model):
     price = models.FloatField()
     category_item = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
     label_item = models.CharField(choices = LABEL_CHOICES, max_length=2)
+    slug_item = models.SlugField()
     
     
     def __str__(self) -> str:
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse(
+            "app_core:product-detail", 
+            kwargs={"slug": self.slug_item}
+        )
+    
     
 class OrderItem(models.Model):
     item = models.ForeignKey(Item, on_delete = models.CASCADE)
